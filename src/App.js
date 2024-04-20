@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { socket } from "./socket";
-import Tictac from "./tictac";
+import Tictac from "./Components/tictac";
 
 function App() {
-  const [chat, setChat] = useState([]);
-  const [move, setMove] = useState();
+  const [move, setMove] = useState(null);
+  const [roomStatus, setRoomStatus] = useState({ roomsize: null });
+
   useEffect(() => {
     // no-op if the socket is already connected
     console.log("why");
@@ -15,14 +16,15 @@ function App() {
     };
   }, []);
   useEffect(() => {
-    socket.on("incomingMessage", (data) => {
+    socket.on("roomStatus", (data) => {
       console.log(data);
-      setChat((chat) => [...chat, data]);
+      setRoomStatus(data);
     });
     return () => {
-      socket.off("incomingMessage");
+      socket.off("roomStatus");
     };
-  }, [chat]);
+  }, [roomStatus]);
+
   useEffect(() => {
     socket.on("newMove", (data) => {
       console.log(data);
@@ -32,10 +34,11 @@ function App() {
       socket.off("newMove");
     };
   }, [move]);
+
   console.log(move + "Lslsl");
   return (
     <div className="App">
-      <Tictac chat={chat} move={move}></Tictac>
+      <Tictac move={move} setMove={setMove} roomStatus={roomStatus}></Tictac>
     </div>
   );
 }

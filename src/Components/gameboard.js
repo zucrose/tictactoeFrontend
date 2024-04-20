@@ -2,7 +2,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useEffect, useState } from "react";
-import { socket } from "./socket";
+import { socket } from "../socket";
 import Gamepiece from "./gamepiece";
 export default function Gameboard({ room, move, ox }) {
   const [turn, setTurn] = useState(0);
@@ -23,7 +23,7 @@ export default function Gameboard({ room, move, ox }) {
     });
   };
   useEffect(() => {
-    if (move !== undefined) {
+    if (move !== null) {
       console.log(gb);
       setGB((gb) =>
         gb.map((ele, ind) => {
