@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export default function Timer({ setTimerExpired }) {
-  const [seconds, setSeconds] = useState(5);
+  const [seconds, setSeconds] = useState(15);
 
   useEffect(() => {
     const intervalSeconds = setInterval(() => {

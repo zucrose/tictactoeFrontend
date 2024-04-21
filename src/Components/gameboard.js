@@ -16,6 +16,11 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
     [" ", " ", " "],
     [" ", " ", " "],
   ]);
+  const [gameboardColor, setGameboardColor] = useState([
+    [" ", " ", " "],
+    [" ", " ", " "],
+    [" ", " ", " "],
+  ]);
   const sendMove = (x, y) => {
     socket.emit("sendMove", {
       room: room,
@@ -49,7 +54,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
       else setWinner(ox === "O" ? "X" : "O");
       setGameState("wonbydq");
     }
-    gameLogic(gb, setWinner, setGameState);
+    gameLogic(gb, setWinner, setGameState, setGameboardColor, gameboardColor);
   }, [gb, roomStatus]);
 
   useEffect(() => {
@@ -57,7 +62,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
       socket.emit("gameEvents", { room: room, playerTimerExpired: ox });
     }
   }, [timerExpired]);
-
+  console.log(gameboardColor);
   return (
     <>
       <Container fluid style={{ position: "relative" }}>
@@ -69,10 +74,12 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
               ? "You Won. Opponent disqualified "
               : "You lost due to disqualification"}
           </div>
+        ) : gameState === "Tied" ? (
+          <div>TIED</div>
         ) : (ox == "O" && turn % 2 == 1) || (ox == "X" && turn % 2 == 0) ? (
           <>
             <div>Opponents turn</div>
-            <p
+            {/*<p
               style={{
                 position: "absolute",
                 zIndex: 1,
@@ -82,7 +89,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
                 opacity: "20%",
                 left: "5px",
               }}
-            ></p>
+            ></p>*/}
           </>
         ) : (
           <>
@@ -102,6 +109,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             turn={turn}
             sendMove={sendMove}
             gameState={gameState}
+            gameboardColor={gameboardColor}
           />
           <Gamepiece
             gb={gb}
@@ -111,6 +119,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             turn={turn}
             sendMove={sendMove}
             gameState={gameState}
+            gameboardColor={gameboardColor}
           />
           <Gamepiece
             gb={gb}
@@ -120,6 +129,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             turn={turn}
             sendMove={sendMove}
             gameState={gameState}
+            gameboardColor={gameboardColor}
           />
         </Row>
         <Row style={{ height: "20vh" }}>
@@ -131,6 +141,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             turn={turn}
             sendMove={sendMove}
             gameState={gameState}
+            gameboardColor={gameboardColor}
           />
           <Gamepiece
             gb={gb}
@@ -140,6 +151,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             turn={turn}
             sendMove={sendMove}
             gameState={gameState}
+            gameboardColor={gameboardColor}
           />
           <Gamepiece
             gb={gb}
@@ -149,6 +161,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             turn={turn}
             sendMove={sendMove}
             gameState={gameState}
+            gameboardColor={gameboardColor}
           />
         </Row>
         <Row style={{ height: "20vh" }}>
@@ -160,6 +173,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             turn={turn}
             sendMove={sendMove}
             gameState={gameState}
+            gameboardColor={gameboardColor}
           />
           <Gamepiece
             gb={gb}
@@ -169,6 +183,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             turn={turn}
             sendMove={sendMove}
             gameState={gameState}
+            gameboardColor={gameboardColor}
           />
           <Gamepiece
             gb={gb}
@@ -178,6 +193,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             turn={turn}
             sendMove={sendMove}
             gameState={gameState}
+            gameboardColor={gameboardColor}
           />
         </Row>
       </Container>
