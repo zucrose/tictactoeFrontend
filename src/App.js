@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { socket } from "./socket";
 import Tictac from "./Components/tictac";
+import { Container } from "react-bootstrap";
 
 function App() {
   const [move, setMove] = useState(null);
@@ -37,9 +38,18 @@ function App() {
 
   console.log(move + "Lslsl");
   return (
-    <div className="App">
-      <Tictac move={move} setMove={setMove} roomStatus={roomStatus}></Tictac>
-    </div>
+    <Container
+      fluid
+      className="align-content-center  justify-content-center p-3 m-2"
+      style={{ backgroundColor: "blueviolet" }}
+    >
+      <Tictac
+        move={move}
+        setMove={setMove}
+        roomStatus={roomStatus}
+        setRoomStatus={setRoomStatus}
+      ></Tictac>
+    </Container>
   );
 }
 

@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
 
-export default function Timer(timerExpired, setTimerExpired) {
-  const [seconds, setSeconds] = useState(30);
+export default function Timer({ setTimerExpired }) {
+  const [seconds, setSeconds] = useState(5);
 
   useEffect(() => {
     const intervalSeconds = setInterval(() => {
+      console.log(seconds);
       setSeconds(seconds - 1);
-      return () => clearInterval(seconds);
     }, 1000);
+    return () => clearInterval(intervalSeconds);
   }, [seconds]);
   return (
-    <div>{timerExpired ? <p>00:{seconds}</p> : setTimerExpired(false)}</div>
+    <div>
+      {seconds >= 0 ? (
+        <p>00:{seconds > 9 ? seconds : "0" + seconds}</p>
+      ) : (
+        setTimerExpired(false)
+      )}
+    </div>
   );
 }

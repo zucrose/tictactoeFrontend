@@ -3,12 +3,17 @@ export default function ChooseRoom({ joinRoom, setJoinCreate }) {
   return (
     <>
       <Row className="m-2 align-content-center  justify-content-center">
-        <Button onClick={() => setJoinCreate("join")} style={{ width: "50%" }}>
+        <Button
+          variant="warning"
+          onClick={() => setJoinCreate("join")}
+          style={{ width: "50%" }}
+        >
           Join Room
         </Button>
       </Row>
       <Row className="m-2 align-content-center  justify-content-center">
         <Button
+          variant="warning"
           onClick={() => {
             joinRoom({
               room: Math.floor(Math.random() * 1000),

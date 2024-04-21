@@ -5,8 +5,9 @@ import Alert from "react-bootstrap/Alert";
 import Timer from "./timer";
 import ChooseRoom from "./chooseRoom";
 import Gameroom from "./Gameroom";
+import JoinroomComponent from "./Joinroom";
 
-export default function Tictac({ move, setMove, roomStatus }) {
+export default function Tictac({ move, setMove, roomStatus, setRoomStatus }) {
   const [room, setRoom] = useState(null);
   const [roomInput, setroomInput] = useState(null);
   const [joinCreate, setJoinCreate] = useState("choose");
@@ -33,55 +34,43 @@ export default function Tictac({ move, setMove, roomStatus }) {
     setRoom(null);
     setOx("");
     setMove(null);
+    setRoomStatus({ roomsize: null });
   };
 
   return (
     <>
-      <Container className="align-content-center  justify-content-center">
-        {" "}
-        {alertMessage != null ? (
-          <Alert
-            variant="danger"
-            onClose={() => setAlertMessage(null)}
-            dismissible
-          >
-            {alertMessage}
-          </Alert>
+      {" "}
+      {alertMessage != null ? (
+        <Alert
+          variant="danger"
+          onClose={() => setAlertMessage(null)}
+          dismissible
+        >
+          {alertMessage}
+        </Alert>
+      ) : null}
+      <div>
+        {joinCreate === "choose" ? (
+          <>
+            <ChooseRoom joinRoom={joinRoom} setJoinCreate={setJoinCreate} />
+          </>
+        ) : joinCreate === "create" ? (
+          <Gameroom
+            leaveRoom={leaveRoom}
+            room={room}
+            roomStatus={roomStatus}
+            move={move}
+            ox={ox}
+            setJoinCreate={setJoinCreate}
+          />
+        ) : joinCreate === "join" ? (
+          <JoinroomComponent
+            roomInput={roomInput}
+            setroomInput={setroomInput}
+            joinRoom={joinRoom}
+          />
         ) : null}
-        <div>
-          {joinCreate === "choose" ? (
-            <>
-              <ChooseRoom joinRoom={joinRoom} setJoinCreate={setJoinCreate} />
-            </>
-          ) : joinCreate === "create" ? (
-            <Gameroom
-              leaveRoom={leaveRoom}
-              room={room}
-              roomStatus={roomStatus}
-              move={move}
-              ox={ox}
-              setJoinCreate={setJoinCreate}
-            />
-          ) : joinCreate === "join" ? (
-            <>
-              <input
-                type="number"
-                value={roomInput}
-                placeholder="join room"
-                onChange={(e) => setroomInput(e.target.value)}
-              ></input>
-              <button
-                type="submit"
-                onClick={() => {
-                  joinRoom({ room: parseInt(roomInput), create: false });
-                }}
-              >
-                Join
-              </button>
-            </>
-          ) : null}
-        </div>
-      </Container>
+      </div>
     </>
   );
 }

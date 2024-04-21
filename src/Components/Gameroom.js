@@ -11,22 +11,37 @@ export default function Gameroom({
   return (
     <>
       <Container className="align-content-center  justify-content-center">
-        <div>Your Room Number is : {room}</div>
+        <Row className="m-2 p-2">
+          Your Room Number is : <span className="h5"> {room}</span>
+        </Row>
         {roomStatus.roomsize == 2 ? (
           <>
-            <Gameboard room={room} move={move} ox={ox} />
+            <Row className="m-2 p-2">
+              <Gameboard
+                room={room}
+                move={move}
+                ox={ox}
+                roomStatus={roomStatus}
+              />
+            </Row>
           </>
         ) : (
-          <div>Waiting for opponent...</div>
+          <Row className="m-2 p-2">
+            <p>Waiting for opponent...</p>
+          </Row>
         )}
-        <Button
-          onClick={() => {
-            leaveRoom(room);
-            setJoinCreate("choose");
-          }}
-        >
-          Quit Room
-        </Button>
+        <Row className="m-2 p-2 justify-content-center">
+          <Button
+            variant="danger"
+            onClick={() => {
+              leaveRoom(room);
+              setJoinCreate("choose");
+            }}
+            style={{ width: "50%" }}
+          >
+            Quit Room
+          </Button>
+        </Row>
       </Container>
     </>
   );

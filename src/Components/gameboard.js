@@ -4,14 +4,17 @@ import Col from "react-bootstrap/Col";
 import { useEffect, useState } from "react";
 import { socket } from "../socket";
 import Gamepiece from "./gamepiece";
-export default function Gameboard({ room, move, ox }) {
+import Timer from "./timer";
+import gameLogic from "./gamelogic";
+export default function Gameboard({ room, move, ox, roomStatus }) {
   const [turn, setTurn] = useState(0);
+  const [timerExpired, setTimerExpired] = useState(true);
   const [gameState, setGameState] = useState("inProgress");
   const [winner, setWinner] = useState("-");
   const [gb, setGB] = useState([
-    [".", ".", "."],
-    [".", ".", "."],
-    [".", ".", "."],
+    [" ", " ", " "],
+    [" ", " ", " "],
+    [" ", " ", " "],
   ]);
   const sendMove = (x, y) => {
     socket.emit("sendMove", {
@@ -41,49 +44,56 @@ export default function Gameboard({ room, move, ox }) {
   }, [move]);
 
   useEffect(() => {
-    for (let i = 0; i < 3; i++) {
-      let cnt = 1;
-      for (let j = 1; j < 3; j++) {
-        if (gb[i][j] != "." && gb[i][j] === gb[i][j - 1]) cnt++;
-        else cnt = 1;
-      }
-      if (cnt == 3) {
-        setGameState("won");
-        setWinner(gb[i][0]);
-        return () => {};
-      }
+    if (roomStatus?.playerTimerExpired) {
+      if (ox != roomStatus.playerTimerExpired) setWinner(ox);
+      else setWinner(ox === "O" ? "X" : "O");
+      setGameState("wonbydq");
     }
-    for (let i = 0; i < 3; i++) {
-      let cnt = 1;
-      for (let j = 1; j < 3; j++) {
-        if (gb[j][i] != "." && gb[j][i] === gb[j - 1][i]) cnt++;
-        else cnt = 1;
-      }
-      if (cnt == 3) {
-        setGameState("won");
-        setWinner(gb[0][i]);
-        return () => {};
-      }
+    gameLogic(gb, setWinner, setGameState);
+  }, [gb, roomStatus]);
+
+  useEffect(() => {
+    if (timerExpired === false) {
+      socket.emit("gameEvents", { room: room, playerTimerExpired: ox });
     }
-    if (gb[1][1] != "." && gb[0][0] === gb[1][1] && gb[1][1] === gb[2][2]) {
-      setGameState("won");
-      setWinner(gb[1][1]);
-      return () => {};
-    }
-    if (gb[1][1] != "." && gb[0][2] === gb[1][1] && gb[1][1] === gb[2][0]) {
-      setGameState("won");
-      setWinner(gb[1][1]);
-      return () => {};
-    }
-  }, [gb]);
+  }, [timerExpired]);
 
   return (
     <>
-      {gameState === "won" ? (
-        <div>{ox === winner ? "U WON" : "U LOST"}</div>
-      ) : null}
-      <Container>
-        <Row>
+      <Container fluid style={{ position: "relative" }}>
+        {gameState === "won" ? (
+          <div>{ox === winner ? "U WON" : "U LOST"}</div>
+        ) : gameState === "wonbydq" ? (
+          <div>
+            {ox === winner
+              ? "You Won. Opponent disqualified "
+              : "You lost due to disqualification"}
+          </div>
+        ) : (ox == "O" && turn % 2 == 1) || (ox == "X" && turn % 2 == 0) ? (
+          <>
+            <div>Opponents turn</div>
+            <p
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                height: "90%",
+                width: "100%",
+                backgroundColor: "red",
+                opacity: "20%",
+                left: "5px",
+              }}
+            ></p>
+          </>
+        ) : (
+          <>
+            {timerExpired === true ? (
+              <Timer setTimerExpired={setTimerExpired} />
+            ) : (
+              <p>Timer Expired</p>
+            )}
+          </>
+        )}
+        <Row style={{ height: "20vh" }}>
           <Gamepiece
             gb={gb}
             x={0}
@@ -112,7 +122,7 @@ export default function Gameboard({ room, move, ox }) {
             gameState={gameState}
           />
         </Row>
-        <Row>
+        <Row style={{ height: "20vh" }}>
           <Gamepiece
             gb={gb}
             x={1}
@@ -141,7 +151,7 @@ export default function Gameboard({ room, move, ox }) {
             gameState={gameState}
           />
         </Row>
-        <Row>
+        <Row style={{ height: "20vh" }}>
           <Gamepiece
             gb={gb}
             x={2}
