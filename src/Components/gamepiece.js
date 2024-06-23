@@ -45,7 +45,13 @@ export default function Gamepiece({
                 fontSize: "3rem",
               }
         }
-        variant={gameboardColor[x][y] == " " ? "info" : "danger"}
+        variant={
+          gameboardColor[x][y] == " "
+            ? "info"
+            : gameboardColor[x][y] == ox
+            ? "success"
+            : "danger"
+        }
         onClick={() => sendMove(x, y)}
         disabled={
           gameState == "inProgress" && gb[x][y] === " "
@@ -56,6 +62,8 @@ export default function Gamepiece({
               : turn % 2 === 0
               ? true
               : false
+            : gameState != "inProgress"
+            ? false
             : true
         }
       >

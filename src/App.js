@@ -4,8 +4,7 @@ import Tictac from "./Components/tictac";
 import { Container } from "react-bootstrap";
 
 function App() {
-  const [move, setMove] = useState(null);
-  const [roomStatus, setRoomStatus] = useState({ roomsize: null });
+  const [roomStatus, setRoomStatus] = useState();
 
   useEffect(() => {
     // no-op if the socket is already connected
@@ -18,37 +17,21 @@ function App() {
   }, []);
   useEffect(() => {
     socket.on("roomStatus", (data) => {
-      console.log(data);
-      setRoomStatus(data);
+      console.log(data, "roomstatus sent");
+      setRoomStatus({ ...data.roomObject });
     });
     return () => {
       socket.off("roomStatus");
     };
   }, [roomStatus]);
-
-  useEffect(() => {
-    socket.on("newMove", (data) => {
-      console.log(data);
-      setMove(data);
-    });
-    return () => {
-      socket.off("newMove");
-    };
-  }, [move]);
-
-  console.log(move + "Lslsl");
+  console.log(roomStatus);
   return (
     <Container
       fluid
       className="align-content-center  justify-content-center p-3 m-2"
-      style={{ backgroundColor: "blueviolet" }}
+      style={{ backgroundColor: "#323232" }}
     >
-      <Tictac
-        move={move}
-        setMove={setMove}
-        roomStatus={roomStatus}
-        setRoomStatus={setRoomStatus}
-      ></Tictac>
+      <Tictac roomStatus={roomStatus} setRoomStatus={setRoomStatus}></Tictac>
     </Container>
   );
 }

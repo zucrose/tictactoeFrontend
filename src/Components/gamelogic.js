@@ -1,9 +1,9 @@
+import { socket } from "../socket";
 export default function gameLogic(
   gb,
-  setWinner,
-  setGameState,
   setGameboardColor,
-  gameboardColor
+  gameboardColor,
+  winnerFound
 ) {
   let win = 0;
   for (let i = 0; i < 3; i++) {
@@ -15,11 +15,10 @@ export default function gameLogic(
     }
     if (cnt == 3) {
       win = 1;
-      setGameState("won");
-      setWinner(gb[i][0]);
+      winnerFound("won", gb[i][0]);
       setGameboardColor((gameboardColor) =>
         gameboardColor.map((ele, index) => {
-          if (index == i) return ele.map((e) => "R");
+          if (index == i) return ele.map((e) => gb[i][0]);
           else return ele;
         })
       );
@@ -34,12 +33,11 @@ export default function gameLogic(
     }
     if (cnt == 3) {
       win = 1;
-      setGameState("won");
-      setWinner(gb[0][i]);
+      winnerFound("won", gb[0][i]);
       setGameboardColor((gameboardColor) =>
         gameboardColor.map((ele) => {
           return ele.map((e, ind) => {
-            if (ind === i) return "R";
+            if (ind === i) return gb[0][i];
             return e;
           });
         })
@@ -49,12 +47,11 @@ export default function gameLogic(
   }
   if (gb[1][1] != " " && gb[0][0] === gb[1][1] && gb[1][1] === gb[2][2]) {
     win = 1;
-    setGameState("won");
-    setWinner(gb[1][1]);
+    winnerFound("won", gb[1][1]);
     setGameboardColor((gameboardColor) =>
       gameboardColor.map((ele, index) => {
         return ele.map((e, ind) => {
-          if (index === ind) return "R";
+          if (index === ind) return gb[1][1];
           return e;
         });
       })
@@ -63,12 +60,11 @@ export default function gameLogic(
   }
   if (gb[1][1] != " " && gb[0][2] === gb[1][1] && gb[1][1] === gb[2][0]) {
     win = 1;
-    setGameState("won");
-    setWinner(gb[1][1]);
+    winnerFound("won", gb[1][1]);
     setGameboardColor((gameboardColor) =>
       gameboardColor.map((ele, index) => {
         return ele.map((e, ind) => {
-          if (index + ind === 2) return "R";
+          if (index + ind === 2) return gb[1][1];
           return e;
         });
       })
@@ -84,7 +80,7 @@ export default function gameLogic(
       }
     }
     if (cnt === 0 && win === 0) {
-      setGameState("Tied");
+      winnerFound("tied", gb[1][1]);
     }
   }
 }

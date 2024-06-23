@@ -6,79 +6,124 @@ import { socket } from "../socket";
 import Gamepiece from "./gamepiece";
 import Timer from "./timer";
 import gameLogic from "./gamelogic";
-export default function Gameboard({ room, move, ox, roomStatus }) {
-  const [turn, setTurn] = useState(0);
+import PlayerWon from "./playerWon";
+import { Button, Modal } from "react-bootstrap";
+export default function Gameboard({ room, ox, roomStatus, RestartRoom }) {
   const [timerExpired, setTimerExpired] = useState(true);
-  const [gameState, setGameState] = useState("inProgress");
-  const [winner, setWinner] = useState("-");
-  const [gb, setGB] = useState([
-    [" ", " ", " "],
-    [" ", " ", " "],
-    [" ", " ", " "],
-  ]);
+  const [show, setShow] = useState(true);
+  const gameState = roomStatus.gameState;
+  const winner = roomStatus.lastWinner;
+  const gb = roomStatus.gameboard;
+  const turn = roomStatus.turn;
   const [gameboardColor, setGameboardColor] = useState([
     [" ", " ", " "],
     [" ", " ", " "],
     [" ", " ", " "],
   ]);
   const sendMove = (x, y) => {
-    socket.emit("sendMove", {
-      room: room,
-      movex: x,
-      movey: y,
-      sender: ox,
-      turn: turn,
-    });
+    if (gameState == "inProgress")
+      socket.emit("sendMove", {
+        room: room,
+        movex: x,
+        movey: y,
+        sender: ox,
+        turn: turn,
+      });
+    else return;
   };
-  useEffect(() => {
-    if (move !== null) {
-      console.log(gb);
-      setGB((gb) =>
-        gb.map((ele, ind) => {
-          if (ind === move.movex)
-            return ele.map((e, index) => {
-              console.log(ox);
-              if (index === move.movey) return move.sender;
-              else return e;
-            });
-          else return ele;
-        })
-      );
-      setTurn((turn) => turn + 1);
-    }
-  }, [move]);
+  const winnerFound = (state, mark) => {
+    if (ox == mark)
+      socket.emit("declareWinner", {
+        room: room,
+        state: state,
+        mark: mark,
+      });
+  };
 
   useEffect(() => {
-    if (roomStatus?.playerTimerExpired) {
-      if (ox != roomStatus.playerTimerExpired) setWinner(ox);
-      else setWinner(ox === "O" ? "X" : "O");
-      setGameState("wonbydq");
+    if (turn == 0) {
+      setGameboardColor([
+        [" ", " ", " "],
+        [" ", " ", " "],
+        [" ", " ", " "],
+      ]);
+      setTimerExpired(true);
     }
-    gameLogic(gb, setWinner, setGameState, setGameboardColor, gameboardColor);
-  }, [gb, roomStatus]);
+    if (gameState == "inProgress")
+      gameLogic(gb, setGameboardColor, gameboardColor, winnerFound);
+  }, [gb]);
 
   useEffect(() => {
     if (timerExpired === false) {
-      socket.emit("gameEvents", { room: room, playerTimerExpired: ox });
+      socket.emit("timeExpired", { room: room, playerTimerExpired: socket.id });
+      setTimerExpired(null);
     }
   }, [timerExpired]);
-  console.log(gameboardColor);
+
   return (
     <>
       <Container fluid style={{ position: "relative" }}>
-        {gameState === "won" ? (
-          <div>{ox === winner ? "U WON" : "U LOST"}</div>
-        ) : gameState === "wonbydq" ? (
+        {gameState === "Won" ? (
           <div>
-            {ox === winner
-              ? "You Won. Opponent disqualified "
-              : "You lost due to disqualification"}
+            {socket.id === winner ? (
+              <PlayerWon
+                show={show}
+                setShow={setShow}
+                roomStatus={roomStatus}
+                RestartRoom={RestartRoom}
+                room={room}
+                ox={ox}
+                type={1}
+              />
+            ) : (
+              <PlayerWon
+                show={show}
+                setShow={setShow}
+                roomStatus={roomStatus}
+                RestartRoom={RestartRoom}
+                room={room}
+                ox={ox}
+                type={2}
+              />
+            )}
+          </div>
+        ) : gameState === "DQ" ? (
+          <div>
+            {socket.id === winner ? (
+              <PlayerWon
+                show={show}
+                setShow={setShow}
+                roomStatus={roomStatus}
+                RestartRoom={RestartRoom}
+                room={room}
+                ox={ox}
+                type={3}
+              />
+            ) : (
+              <PlayerWon
+                show={show}
+                setShow={setShow}
+                roomStatus={roomStatus}
+                RestartRoom={RestartRoom}
+                room={room}
+                ox={ox}
+                type={4}
+              />
+            )}
           </div>
         ) : gameState === "Tied" ? (
-          <div>TIED</div>
+          <PlayerWon
+            show={show}
+            setShow={setShow}
+            roomStatus={roomStatus}
+            RestartRoom={RestartRoom}
+            room={room}
+            ox={ox}
+            type={5}
+          />
         ) : (ox == "O" && turn % 2 == 1) || (ox == "X" && turn % 2 == 0) ? (
           <>
-            <div>Opponents turn</div>
+            <h6 className="text-white">Opponents turn</h6>
             {/*<p
               style={{
                 position: "absolute",
@@ -96,7 +141,7 @@ export default function Gameboard({ room, move, ox, roomStatus }) {
             {timerExpired === true ? (
               <Timer setTimerExpired={setTimerExpired} />
             ) : (
-              <p>Timer Expired</p>
+              <p className="text-danger">Timer Expired</p>
             )}
           </>
         )}

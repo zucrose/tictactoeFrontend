@@ -16,7 +16,7 @@ export default function ChooseRoom({ joinRoom, setJoinCreate }) {
           variant="warning"
           onClick={() => {
             joinRoom({
-              room: Math.floor(Math.random() * 1000),
+              room: -1,
               create: true,
             });
           }}

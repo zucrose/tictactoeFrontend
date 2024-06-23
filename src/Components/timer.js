@@ -13,7 +13,9 @@ export default function Timer({ setTimerExpired }) {
   return (
     <div>
       {seconds >= 0 ? (
-        <p>00:{seconds > 9 ? seconds : "0" + seconds}</p>
+        <p className={seconds > 5 ? "text-white" : "text-danger"}>
+          00:{seconds > 9 ? seconds : "0" + seconds}
+        </p>
       ) : (
         setTimerExpired(false)
       )}

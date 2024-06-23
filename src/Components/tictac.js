@@ -7,16 +7,14 @@ import ChooseRoom from "./chooseRoom";
 import Gameroom from "./Gameroom";
 import JoinroomComponent from "./Joinroom";
 
-export default function Tictac({ move, setMove, roomStatus, setRoomStatus }) {
+export default function Tictac({ roomStatus, setRoomStatus }) {
   const [room, setRoom] = useState(null);
   const [roomInput, setroomInput] = useState(null);
   const [joinCreate, setJoinCreate] = useState("choose");
   const [alertMessage, setAlertMessage] = useState(null);
-  const [ox, setOx] = useState("");
   const [timerExpired, setTimerExpired] = useState(true);
 
   const joinRoom = ({ room, create }) => {
-    setRoom(room);
     socket.emit("joinRoom", { room: room, create: create }, (msg) => {
       console.log(msg.status);
       if (msg.status === "failure") {
@@ -24,19 +22,20 @@ export default function Tictac({ move, setMove, roomStatus, setRoomStatus }) {
         setJoinCreate("choose");
       } else {
         setJoinCreate("create");
-        if (msg.roomsize === 2) setOx("X");
-        else if (msg.roomsize === 1) setOx("O");
+        console.log(msg);
+        setRoom(msg.room);
       }
     });
   };
   const leaveRoom = (room) => {
-    socket.emit("leaveRoom", room);
+    socket.emit("leaveRoom", { room: room, id: socket.id });
     setRoom(null);
-    setOx("");
-    setMove(null);
-    setRoomStatus({ roomsize: null });
-  };
 
+    setRoomStatus({ roomsize: null, restart: null });
+  };
+  const RestartRoom = (room) => {
+    socket.emit("RestartRoom", { room: room });
+  };
   return (
     <>
       {" "}
@@ -59,9 +58,9 @@ export default function Tictac({ move, setMove, roomStatus, setRoomStatus }) {
             leaveRoom={leaveRoom}
             room={room}
             roomStatus={roomStatus}
-            move={move}
-            ox={ox}
             setJoinCreate={setJoinCreate}
+            RestartRoom={RestartRoom}
+            setRoomStatus={setRoomStatus}
           />
         ) : joinCreate === "join" ? (
           <JoinroomComponent
