@@ -6,29 +6,33 @@ import Timer from "./timer";
 import ChooseRoom from "./chooseRoom";
 import Gameroom from "./Gameroom";
 import JoinroomComponent from "./Joinroom";
+import HangmanRoom from "./HangmanComponents/HangmanRoom";
 
 export default function Tictac({ roomStatus, setRoomStatus }) {
   const [room, setRoom] = useState(null);
   const [roomInput, setroomInput] = useState(null);
   const [joinCreate, setJoinCreate] = useState("choose");
   const [alertMessage, setAlertMessage] = useState(null);
-  const [timerExpired, setTimerExpired] = useState(true);
-
+  const [gamemode, setGamemode] = useState("tictac");
   const joinRoom = ({ room, create }) => {
-    socket.emit("joinRoom", { room: room, create: create }, (msg) => {
-      console.log(msg.status);
-      if (msg.status === "failure") {
-        setAlertMessage("Failed to join room.");
-        setJoinCreate("choose");
-      } else {
-        setJoinCreate("create");
-        console.log(msg);
-        setRoom(msg.room);
+    socket.emit(
+      "joinRoom",
+      { room: room, create: create, type: gamemode, id: socket.id },
+      (msg) => {
+        console.log(msg.status);
+        if (msg.status === "success") {
+          setJoinCreate("create");
+          console.log(msg);
+          setRoom(msg.room);
+        } else {
+          setAlertMessage("Failed to join room.");
+          setJoinCreate("choose");
+        }
       }
-    });
+    );
   };
   const leaveRoom = (room) => {
-    socket.emit("leaveRoom", { room: room, id: socket.id });
+    socket.emit("leaveRoom", { room: room, id: socket.id, type: gamemode });
     setRoom(null);
 
     setRoomStatus({ roomsize: null, restart: null });
@@ -51,17 +55,32 @@ export default function Tictac({ roomStatus, setRoomStatus }) {
       <div>
         {joinCreate === "choose" ? (
           <>
-            <ChooseRoom joinRoom={joinRoom} setJoinCreate={setJoinCreate} />
+            <ChooseRoom
+              joinRoom={joinRoom}
+              setJoinCreate={setJoinCreate}
+              setGamemode={setGamemode}
+            />
           </>
         ) : joinCreate === "create" ? (
-          <Gameroom
-            leaveRoom={leaveRoom}
-            room={room}
-            roomStatus={roomStatus}
-            setJoinCreate={setJoinCreate}
-            RestartRoom={RestartRoom}
-            setRoomStatus={setRoomStatus}
-          />
+          gamemode === "tictac" ? (
+            <Gameroom
+              leaveRoom={leaveRoom}
+              room={room}
+              roomStatus={roomStatus}
+              setJoinCreate={setJoinCreate}
+              RestartRoom={RestartRoom}
+              setRoomStatus={setRoomStatus}
+            />
+          ) : (
+            <HangmanRoom
+              leaveRoom={leaveRoom}
+              room={room}
+              roomStatus={roomStatus}
+              setJoinCreate={setJoinCreate}
+              RestartRoom={RestartRoom}
+              setRoomStatus={setRoomStatus}
+            ></HangmanRoom>
+          )
         ) : joinCreate === "join" ? (
           <JoinroomComponent
             roomInput={roomInput}

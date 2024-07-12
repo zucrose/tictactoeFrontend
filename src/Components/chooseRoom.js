@@ -1,7 +1,17 @@
+import { useState } from "react";
 import { Button, Container, Row, Col } from "react-bootstrap";
-export default function ChooseRoom({ joinRoom, setJoinCreate }) {
+import Form from "react-bootstrap/Form";
+
+export default function ChooseRoom({ joinRoom, setJoinCreate, setGamemode }) {
   return (
     <>
+      <Row className="m-2 align-content-center  justify-content-center text-white">
+        <div>Choose gamemode: </div>
+        <Form.Select onChange={(e) => setGamemode(e.target.value)}>
+          <option value="tictac">TicTacToe</option>
+          <option value="hangman">HangMan</option>
+        </Form.Select>
+      </Row>
       <Row className="m-2 align-content-center  justify-content-center">
         <Button
           variant="warning"
