@@ -15,6 +15,7 @@ export default function Tictac({ roomStatus, setRoomStatus }) {
   const [alertMessage, setAlertMessage] = useState(null);
   const [gamemode, setGamemode] = useState("tictac");
   const joinRoom = ({ room, create }) => {
+    console.log(room);
     socket.emit(
       "joinRoom",
       { room: room, create: create, type: gamemode, id: socket.id },

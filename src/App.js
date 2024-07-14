@@ -29,7 +29,6 @@ function App() {
     <Container
       fluid
       className="align-content-center  justify-content-center p-3 m-2"
-      style={{ backgroundColor: "#323232" }}
     >
       <Tictac roomStatus={roomStatus} setRoomStatus={setRoomStatus}></Tictac>
     </Container>

@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function Timer({ setTimerExpired, x }) {
-  const [seconds, setSeconds] = useState(x);
-
+export default function Timer({ setTimerExpired, seconds, setSeconds }) {
   useEffect(() => {
     const intervalSeconds = setInterval(() => {
       //console.log(seconds);
@@ -13,7 +11,7 @@ export default function Timer({ setTimerExpired, x }) {
   return (
     <div>
       {seconds >= 0 ? (
-        <p className={seconds > 5 ? "text-white" : "text-danger"}>
+        <p className={seconds > 5 ? "" : "text-danger"}>
           00:{seconds > 9 ? seconds : "0" + seconds}
         </p>
       ) : (

@@ -139,7 +139,7 @@ export default function Gameboard({ room, ox, roomStatus, RestartRoom }) {
         ) : (
           <>
             {timerExpired === true ? (
-              <Timer setTimerExpired={setTimerExpired} />
+              <Timer setTimerExpired={setTimerExpired} x={15} />
             ) : (
               <p className="text-danger">Timer Expired</p>
             )}
