@@ -9,13 +9,16 @@ export default function Timer({ setTimerExpired, seconds, setSeconds }) {
     return () => clearInterval(intervalSeconds);
   }, [seconds]);
   return (
-    <div>
+    <div className="">
       {seconds >= 0 ? (
-        <p className={seconds > 5 ? "" : "text-danger"}>
+        <h6
+          className={seconds > 5 ? "p-3  " : "text-danger p-3"}
+          style={{ textAlign: "right" }}
+        >
           00:{seconds > 9 ? seconds : "0" + seconds}
-        </p>
+        </h6>
       ) : (
-        setTimerExpired(false)
+        setTimerExpired("off")
       )}
     </div>
   );

@@ -6,7 +6,9 @@ export default function checkReplace(
   lives,
   setLives,
   alphabets,
-  setAlphabets
+  setAlphabets,
+  incorrectAudio,
+  correctAudio
 ) {
   let str = word,
     cnt = 0;
@@ -29,4 +31,5 @@ export default function checkReplace(
       return e;
     })
   );
+  return <>{cnt == 0 ? incorrectAudio.play() : correctAudio.play()}</>;
 }

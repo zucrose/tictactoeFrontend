@@ -53,7 +53,7 @@ export default function Tictac({ roomStatus, setRoomStatus }) {
           {alertMessage}
         </Alert>
       ) : null}
-      <div>
+      <div className="d-flex justify-content-center ">
         {joinCreate === "choose" ? (
           <>
             <ChooseRoom

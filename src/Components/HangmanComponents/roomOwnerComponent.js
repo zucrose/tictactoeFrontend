@@ -6,10 +6,12 @@ import {
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { socket } from "../../socket";
-export default function RoomOwnerComponent({ roomStatus }) {
+import PlayerWonLoss from "./playerWonLoss";
+export default function RoomOwnerComponent({ roomStatus, pid }) {
   const [rounds, SetRounds] = useState(3);
   const [alertMessage, setAlertMessage] = useState();
   const [alertEnabled, setAlertEnabled] = useState(false);
+  const [show, setShow] = useState(true);
   // console.log(roomStatus.roomState);
   const alertFunction = (msg) => {
     setAlertEnabled(true);
@@ -28,47 +30,66 @@ export default function RoomOwnerComponent({ roomStatus }) {
     });
   };
   return (
-    <Container>
+    <div
+      className="h-100"
+      style={{ backgroundColor: "beige", border: "solid", borderRadius: "5px" }}
+    >
       {alertEnabled ? (
-        <Alert variant="danger" onClose={() => closeAlert()} dismissible>
+        <Alert
+          className="m-2"
+          variant="danger"
+          onClose={() => closeAlert()}
+          dismissible
+        >
           {alertMessage}
         </Alert>
       ) : null}
 
       {roomStatus.roomState === "notStarted" ||
       roomStatus.roomState == "end" ? (
-        <Row>
-          <Col className="text-white">
+        <Col className="">
+          <h1 className=" d-flex justify-content-center align-items-center  w-100 p-3">
             {" " + "Number of Rounds" + ": "}
             <FontAwesomeIcon
+              className="p-3 scaleonhover"
               icon={faChevronLeft}
               onClick={() =>
                 rounds > 1
                   ? SetRounds(rounds - 1)
                   : alertFunction("Must have atleast one round")
               }
+              style={{ color: "darkcyan" }}
             />{" "}
             {" " + rounds + "  "}
             <FontAwesomeIcon
+              className="p-3 scaleonhover"
               icon={faChevronRight}
               onClick={() =>
                 rounds < 10
                   ? SetRounds(rounds + 1)
                   : alertFunction("Can have atmost 10 rounds")
               }
+              style={{ color: "darkcyan" }}
             />
-          </Col>
-          <Col>
             <Button
+              className=""
               onClick={() => {
                 startGame();
               }}
             >
               START
             </Button>
-          </Col>
-        </Row>
+          </h1>
+        </Col>
       ) : null}
-    </Container>
+      {roomStatus.roomState === "end" ? (
+        <PlayerWonLoss
+          roomStatus={roomStatus}
+          show={show}
+          setShow={setShow}
+          pid={pid}
+        />
+      ) : null}
+    </div>
   );
 }

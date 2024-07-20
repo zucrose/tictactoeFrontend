@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #323232;
+  background-color: #000000;
 }
 div {
   /* border: 1px solid black;*/
@@ -13,4 +13,14 @@ div {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.scaleonhover:hover {
+  scale: 1.3;
+}
+.hangmanButton {
+  font-size: 4vh;
+  height: 10vh;
+  width: 7vh;
+  padding: 1vh;
 }

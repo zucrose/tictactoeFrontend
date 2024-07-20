@@ -4,9 +4,9 @@ import Form from "react-bootstrap/Form";
 
 export default function ChooseRoom({ joinRoom, setJoinCreate, setGamemode }) {
   return (
-    <>
+    <div className="d-inline-block align-item-center justify-content-center flex-column h-75 w-100 ">
       <Row className="m-2 align-content-center  justify-content-center text-white">
-        <div>Choose gamemode: </div>
+        <div>{"Choose gamemode: " + "  "}</div>
         <Form.Select onChange={(e) => setGamemode(e.target.value)}>
           <option value="tictac">TicTacToe</option>
           <option value="hangman">HangMan</option>
@@ -35,6 +35,6 @@ export default function ChooseRoom({ joinRoom, setJoinCreate, setGamemode }) {
           Create Room
         </Button>
       </Row>
-    </>
+    </div>
   );
 }

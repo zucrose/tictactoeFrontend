@@ -28,7 +28,7 @@ function App() {
   return (
     <Container
       fluid
-      className="align-content-center  justify-content-center p-3 m-2"
+      className=" align-content-center  justify-content-center p-3 m-2  "
     >
       <Tictac roomStatus={roomStatus} setRoomStatus={setRoomStatus}></Tictac>
     </Container>
